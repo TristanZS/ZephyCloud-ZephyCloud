@@ -1,0 +1,64 @@
+HOWTO: AWS Region
+=================
+
+
+1) AWS configuration
+--------------------
+
+When you want use a AWS region, you should ensure that in this region:
+
+* The policy group 'api_creator_group' exists
+* The 'api_creator' user exists and is member of this group
+* The 'api_creator' user only have access key login strategy
+* The 'api_creator' user access key is saved in dashboard secrets with the following slung:
+  https://dashboard.aziugo.com/users/secrets/data/slug/aws-%AWS_REGION%-api-creator
+* All the AMI used as base for workers AMIs for your project should exists in this region
+
+
+2) api_creator_group Policy
+---------------------------
+
+the api_creator_group should have the following strategy:
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:AssociateRouteTable",
+                "ec2:AttachInternetGateway",
+                "ec2:AuthorizeSecurityGroupIngress",
+                "ec2:CancelSpotFleetRequests",
+                "ec2:CreateInternetGateway",
+                "ec2:CreateRoute",
+                "ec2:CreateRouteTable",
+                "ec2:CreateSecurityGroup",
+                "ec2:CreateSubnet",
+                "ec2:CreateVpc",
+                "ec2:DeleteSubnet",
+                "ec2:DeleteVpc",
+                "ec2:Describe*",
+                "ec2:DetachInternetGateway",
+                "ec2:DisassociateRouteTable",
+                "ec2:ModifySubnetAttribute",
+                "ec2:ModifyVpcAttribute",
+                "ec2:RequestSpotFleet"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:DeleteSSHPublicKey",
+                "iam:GetSSHPublicKey",
+                "iam:ListSSHPublicKeys",
+                "iam:UpdateSSHPublicKey",
+                "iam:UploadSSHPublicKey"
+            ],
+            "Resource": "arn:aws:iam::*:user/${aws:username}"
+        }
+    ]
+}

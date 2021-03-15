@@ -1,0 +1,127 @@
+HOWTO: Testing
+==============
+
+Introduction
+------------
+
+Testing is cool. We don't have enough tests in this projects
+
+There is three kind of tests:
+- Manuel testing.
+- Unit testing (see bellow).
+- Functional testing (see bellow).
+Manual testing are located in ZephyCLOUD/TESTS/other and are not described here
+
+Except for manual testings, automated testing is a way to not require to check manually that everything works.
+That way:
+- You save time (You loose a little before, end then you save a lot)
+- You can be more sure about your code (you are less prone to skip some testing when your off the deadline)
+- You learn to write better code
+
+The main idea is to create a test before breaking anything.
+So this way we can be sure the change is successful when previously written tests work again
+(see https://en.wikipedia.org/wiki/Code_refactoring )
+
+
+
+
+Prerequisites:
+--------------
+
+Those tests are designed to be run on local computer so you need some python libraries to run
+them on your local workstation.
+They are not required on the servers, because those tests are not directly launched on the servers
+
+Here the list of required libraries:
+- unittest2 (use for unit tests)
+- lettuce (main functional testing library)
+- nose (assertion library for lettuce)
+- python-Levenshtein (optional, speed up lettuce)
+
+You can install all of this using the following command:
+HOME=/root sudo pip install unittest2 lettuce python-Levenshtein nose
+
+
+
+
+Unit Tests
+----------
+
+Unit tests aim to check a single function or a single Class to works has expected, separated from the rest of the code.
+More general information here https://en.wikipedia.org/wiki/Unit_testing
+
+In this project, they are located in ZephyCLOUD/TESTS/unit_tests
+They are designed to be run on the developer computer
+
+To run all unit tests:
+- cd ZephyCLOUD/TESTS/unit_tests
+- python -m unittest discover .
+Alternatively, the ZephyCLOUD/TESTS/run_unittests.sh do the same thing
+
+
+To run one test:
+- cd ZephyCLOUD/TESTS/unit_tests
+- python -m unittest test_something
+
+
+
+Functional Tests
+----------------
+
+Those tests are designed to check the full implementation of a server.
+It's a way to ensure all software pieces work well together.
+
+Because ZephyCLOUD project talks to several services, the functional tests (run on the developer computer) will
+call a dev server.
+SO REAL COMPUTATION WILL HAPPENED !
+
+We use 'lettuce' as functional testing framework. For details about this library, see http://lettuce.it/
+
+By default, test will be run on apidev server.
+You can run those test on a different server using the ZS_SERVER_NAME environment variable
+
+
+To run all tests quickly:
+- cd ZephyCLOUD/TESTS/funct_test
+- lettuce -v1 --failfast
+
+To run all tests for a specific server:
+- cd ZephyCLOUD/TESTS/funct_test
+- ZS_SERVER_NAME=apicn.zephy-science.com lettuce -v1 --failfast
+
+Alternatively, to do the same thing with more details, you could run:
+- ZephyCLOUD/TESTS/run.py func -d apicn.zephy-science.com
+
+To get run one feature with details (for debug):
+- cd ZephyCLOUD/TESTS/funct_test
+- lettuce -v4 features/factorial.feature
+
+
+The run.py accept optional parameters.
+This parameter could be:
+  - an environment to test, one value of 'dev', 'vm' and 'prod', or
+  - The server domain name
+If nothing is provided, the 'dev' environment will be used
+All other parameters will be forwarded to the lettuce binary
+
+Note that some tests, like moving a project, require that no specific server, but a test environment is defined
+
+
+
+Some Testing Practices:
+-----------------------
+
+There is some practices about testing to help you develop better code:
+
+- Write the test before the code (AKA TDD, see https://en.wikipedia.org/wiki/Test-driven_development )
+  This way you think first about how your code should be used than how it works inside.
+  So the code will be more cleaner
+  Your code will also be divided into small autonomous features which are easier to maintain
+
+- When you have a bug feedback, write the test for this bug first.
+  This way of doing ensure:
+  * You will limit lost time to check a 'hard to reproduce' bug (and even heisenbugs)
+  * You will be sure all your future release will not contains this bug (this is called non-regression tests)
+
+
+

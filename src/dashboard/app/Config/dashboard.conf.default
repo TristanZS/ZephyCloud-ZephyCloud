@@ -1,0 +1,14 @@
+[dashboard]
+log_level=0
+log_output=stderr
+use_saml=true
+allowed_users=["samuel.deal", "alexandre.chauvin", "tristan.clarenc"]
+server_name=apidev.zephy-science.com
+admin_user=admin
+admin_password=admin_pwd
+cache_folder=cache
+session_folder=sessions
+security_salt=DYhG93b0R2G0FgaqyJfIxfs2guVoUubWwvniC9mi
+security_cipher_seed=76893096574535424967496836545
+signin_url=null
+provider_pricing_api=https://cloud-pricing.nimgwin.com

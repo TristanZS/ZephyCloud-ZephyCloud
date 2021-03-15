@@ -1,0 +1,184 @@
+# This file is the main configuration of your project
+
+api_name: zephycloud
+
+subdomains:
+  dev: '%API_NAME%.%LOCAL_USER%.dev'
+  stage: apidev.zephy-science.com
+  prod: api.zephycloud.aziugo.com
+
+servers:
+  default:
+    log_level: info
+    dashboard_log_level: info
+    email: https://dashboard.aziugo.com/users/secrets/data/slug/Bot-Email-access
+    admin: https://dashboard.aziugo.com/users/secrets/data/slug/zephycloud-admin-api
+    admin_email: sysadmin@aziugo.com
+    use_backoffice: false
+    back_office_key: https://dashboard.aziugo.com/api/users/secrets/data/slug/sysadmin-zephycloud-com-token.html
+    monitoring_server: monitoring.aziugo.com
+    monitoring_key: https://dashboard.aziugo.com/api/users/secrets/data/slug/monitoring-fluentd-secret.html
+    monitoring_ssh_key: https://dashboard.aziugo.com/api/users/secrets/data/slug/sysadmin-monitoring-monitoring-ssh-key.html
+    provider_pricing_api: https://cloud-pricing.nimgwin.com
+    currency_api: https://dashboard.aziugo.com/api/users/secrets/data/slug/api_currency.html
+    logview_server: https://logs.aziugo.com
+    tmp_folder: /tmp/%API_NAME%
+    currency: euro
+    zephycoin_price: 4
+    providers:
+    - aws_eu
+    - aws_eu_old
+    - aws_eu_very_old
+    storages:
+    - s3_eu
+    dashboard_saml: true
+    dashboard_users:
+    - samuel.deal
+    - alexandre.chauvin
+    - tristan.clarenc
+    - theo.reffet
+
+  api.zephycloud.aziugo.com:
+    tmp_folder: /home/%API_NAME%/tmp
+    log_level: debug
+    signin_url: https://dashboard.zephycloud.com/signup.html
+    dashboard_log_level: info
+    use_backoffice: true
+    monitoring_port_range: [30001, 40000]
+
+  api.zephycloud.aziugo.cn:
+    tmp_folder: /home/%API_NAME%/tmp
+    log_level: info
+    signin_url: https://dashboard.zephycloud.com/signup.html
+    use_backoffice: true
+    currency: yuann
+    zephycoin_price: 30
+    providers:
+    - aws_cn
+    storages:
+    - s3_cn
+    monitoring_port_range: [40001, 50000]
+
+  apidev.zephy-science.com:
+    tmp_folder: /home/%API_NAME%/tmp
+    log_level: debug
+    dashboard_log_level: info
+    storages:
+    - s3_eu_test
+    monitoring_port_range: [50001, 55000]
+
+
+  apidev2.zephy-science.com:
+    tmp_folder: /home/%API_NAME%/tmp
+    log_level: debug
+    dashboard_log_level: info
+    admin_email: samuel.deal@aziugo.com
+    storages:
+    - s3_eu_apidev2
+    monitoring_port_range: [55001, 60000]
+
+
+  zephycloud.%LOCAL_USER%.dev:
+    log_level: debug
+    dashboard_log_level: debug
+    admin:
+      login: admin
+      password: admin_pwd
+    admin_email: '%LOCAL_USER%@aziugo.com'
+    providers:
+    - docker_local
+    - aws_eu
+    - aws_eu_old
+    - aws_eu_very_old
+    storages:
+    - docker_filesystem
+    - s3_eu_test
+    dashboard_saml: false
+
+providers:
+  aws_eu:
+    type: aws
+    region: eu-west-1
+    use_spot: 1
+    storage_priority: [s3_eu_test, s3_eu_apidev2, s3_eu]
+    iam: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-west-zephycloud-ec2-iam-tokens.html
+    worker_ami: ami-08719573e7868cfa9
+    security_groups: [SSH]
+    ssh: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-west-zephycloud-ec2-workers-ssh-keys.html
+    root_ssh: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-west-zephycloud-ec2-workers-root-ssh-keys.html
+
+  aws_eu_old:
+    type: aws
+    region: eu-west-1
+    use_spot: 1
+    storage_priority: [s3_eu_test, s3_eu_apidev2, s3_eu]
+    iam: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-west-zephycloud-ec2-iam-tokens.html
+    worker_ami: ami-08719573e7868cfa9
+    security_groups: [SSH]
+    ssh: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-west-zephycloud-ec2-workers-ssh-keys.html
+    root_ssh: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-west-zephycloud-ec2-workers-root-ssh-keys.html
+
+  aws_eu_very_old:
+    type: aws
+    region: eu-west-1
+    use_spot: 1
+    storage_priority: [s3_eu_test, s3_eu_apidev2, s3_eu]
+    iam: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-west-zephycloud-ec2-iam-tokens.html
+    worker_ami: ami-08719573e7868cfa9
+    security_groups: [SSH]
+    ssh: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-west-zephycloud-ec2-workers-ssh-keys.html
+    root_ssh: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-west-zephycloud-ec2-workers-root-ssh-keys.html
+
+  aws_cn:
+    type: aws
+    region: cn-north-1
+    use_spot: 1
+    storage_priority: [s3_cn]
+    security_groups: [SSH]
+    iam: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-china-zephycloud-ec2-iam-tokens.html
+    ssh: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-china-zephycloud-ec2-workers-ssh-keys.html
+    root_ssh: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-china-zephycloud-ec2-workers-root-ssh-keys.html
+    worker_ami: ami-0e984bd6dbc5323fa
+
+  docker_local:
+    type: docker
+    server_location: eu
+    storage_priority: [docker_filesystem]
+
+storages:
+  s3_eu:
+    type: s3
+    region: eu-west-1
+    bucket: zephycloud-eu
+    iam: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-west-zephycloud-s3-iam-tokens.html
+
+  s3_cn:
+    type: s3
+    region: cn-north-1
+    bucket: zephycloud-cn
+    iam: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-china-zephycloud-s3-iam-tokens.html
+
+  s3_eu_test:
+    type: s3
+    region: eu-west-1
+    bucket: zephycloud-eu-test
+    iam: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-west-zephycloud-s3-iam-tokens.html
+
+  s3_eu_apidev2:
+    type: s3
+    region: eu-west-1
+    bucket: zephycloud-eu-apidev2
+    iam: https://dashboard.aziugo.com/api/users/secrets/data/slug/aws-west-zephycloud-s3-iam-tokens.html
+
+  docker_filesystem:
+    type: local_filesystem
+    path: /data/storage
+    server_location: eu
+
+workers:
+  aws:
+    base_img: base_ubuntu_1804
+    security_groups: [SSH]
+    ssh_user: ubuntu
+
+security_salt: hV1k5V5rvmZu3CwfOuz9I9c87BtrwxJbJ1VxcfzZ

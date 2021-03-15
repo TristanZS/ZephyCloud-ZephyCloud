@@ -1,0 +1,111 @@
+#HOWTO deploy the API
+
+Requirements:
+=============
+
+See the projet Readme file
+
+Installation
+============
+  
+To run the env in a VM:
+-----------------------
+  You will need vagrant or docker
+  On windows:
+  * bonjour service (http://support.apple.com/kb/DL999)
+  On Linux:
+  * avahi-daemon
+  * lxc
+  
+  In any case you will need the same requirement needed to deploy
+
+
+New server installation:
+------------------------
+
+If you have just installed a new server, check the following steps:
+* You have a secure (key based) ssh access to the server
+* You have a firewall installed
+* You should define the host name
+* Set locale and time zone (prefer UTF8 and UTC)
+
+
+To install on a new server:
+---------------------------
+
+* Generate a configuration:
+** tools/install_utils/generate_conf.py MY_DOMAIN.COM
+
+* Copy the conf generated folder on the server
+** scp -r tmp/confs/tmpCt2b58 ME@MY_DOMAIN.COM:/home/ME/myproject_conf
+
+* Copy the project folder somewhere on the server (ex: /home/sam/my_project, you can use scp or rsync)
+** rsync -a --exclude tmp . ME@MY_DOMAIN.COM:/home/ME/my_project
+
+* Install requirements:
+**  apt-get install python python-jinja2 python-pip python-bs4
+**  pip install PyYAML python-gnupg
+
+* Run install script on the server
+** ssh ME@MY_DOMAIN.COM
+** sudo /home/ME/my_project/tools/install_utils/install.sh MY_DOMAIN.COM /home/ME/myproject_conf/
+
+
+
+Make the server robust:
+-----------------------
+
+* automate database backup
+* install td-agent for monitoring
+
+
+Configure auto-deployement:
+---------------------------
+
+On a server, 
+
+
+
+Tools list
+==========
+
+They are located in the tools folder:
+
+* db_utils: 
+	Tristan scripts for db database management scripts. 
+	TODO: manage same action using dashboard and then remove those files
+	see db folder, docs/db_structure.txt and docs/howto_db_versioning.txt for another attemps of db managament
+* docker:
+	Docker based VM for testing.
+	Not yet functionnal. 
+	TODO: develop that and write documentation
+* old:
+	Backup of old Omegacube files
+	TODO: backuped somewhere else and then removed
+* install:
+	Installation scripts. Used for VM or real server installation.
+	See docs/howto_deploy_api.txt for details
+* vagrant: 
+	VM for testing api. 
+	see docs/howto_vagrant.txt for ùmore details
+* generate_conf.py:
+	Script used to generate a configuration, fetcghing amazon keys and secrets, etc ...
+	Run generate_conf.py --help for details
+* backup_db.sh: 
+	Script to deploy the current version of API files on an already installed server.
+	TODO: make sure anyone can backup easily using real backup system
+	Run backup_db.sh --help for more details
+* restore_backup.sh: 
+	Script to restore a database backup.
+	TODO: make sure anyone can backup easily using real backup system
+	Run restore_backup.sh --help for more details
+* saml_get.py
+	Script to get an url content on website where saml authentication is required.
+* secrets_get.py
+	Script to get a secret content from the dashboard secrets
+	Used for deployement scripts
+* update_api.sh: 
+	Script to deploy the current version of API files on an already installed server.
+	Run update_api.sh --help for more details
+
+	

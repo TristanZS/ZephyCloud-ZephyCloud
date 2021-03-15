@@ -1,0 +1,23 @@
+[dashboard]
+log_level=INFO
+log_output=/var/log/zephycloud/zephycloud_dashboard.log
+
+use_saml=true
+allowed_users="[\"tristan.clarenc\"]"
+server_name=SOME_DOMAIN
+
+# Same value than config.conf in [admin]
+admin_user=XXXXXXXXXXXXXXXXXXXXXXXX
+admin_password=XXXXXXXXXXXXXXXXXXXXXX
+
+cache_folder=/tmp/zephycloud/dashboard/cache
+session_folder=/tmp/zephycloud/dashboard/sessions
+security_salt=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+security_cipher_seed=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+main_currency=euro
+zephycoin_price=4
+
+signin_url=https://dashboard.zephycloud.com/signup.html
+provider_pricing_api=https://cloud-pricing.SOME_DOMAIN
+

@@ -1,0 +1,29 @@
+TO DO
+	specify EBS size from database
+	repasser sur les fermetures de machines
+
+TO DISCUSS
+	connection interrompue à l'upload , what happens
+	controle nb de machines ouvertes: maintenant=error plus tard=queue
+	
+
+sqlite3
+pip
+Perl module :
+	Term::ReadKey
+Python lib :
+	slumber
+	boto
+	gunicorn
+	redis
+
+Installation:
+./install.sh
+
+Lancement: 
+gunicorn omegaz:app -w 4 --daemon
+
+
+To deploy a new server:
+- configure DNS in gandi interface
+- connect to it, and create a user tristanzs

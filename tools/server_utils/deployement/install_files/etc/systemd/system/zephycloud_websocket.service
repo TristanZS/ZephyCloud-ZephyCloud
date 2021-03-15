@@ -1,0 +1,20 @@
+[Unit]
+Description=ZephyCloud Persistent connection server
+Requires=nginx.service redis.service
+Before=nginx.service
+After=network.target redis.service postgres.service
+
+[Service]
+User=zephycloud
+Group=zephycloud
+
+WorkingDirectory=/home/zephycloud/app
+Environment="PATH=/home/zephycloud/zephycloud_env/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="PWD=/home/zephycloud/app"
+ExecStart="/home/zephycloud/zephycloud_env/bin/python" "/home/zephycloud/app/websocket_server.py"
+
+PrivateTmp=false
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

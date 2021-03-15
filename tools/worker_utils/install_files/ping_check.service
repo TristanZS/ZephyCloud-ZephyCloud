@@ -1,0 +1,15 @@
+[Unit]
+Description=Ping check security service
+After=local-fs.target
+
+[Service]
+OOMScoreAdjust=-600
+MemoryMax=10%
+CPUQuota=10%
+
+Type=simple
+ExecStart=/usr/bin/env python /usr/local/bin/ping_check.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

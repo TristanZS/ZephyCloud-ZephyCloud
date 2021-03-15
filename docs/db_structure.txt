@@ -1,0 +1,59 @@
+Database Structure
+==================
+
+Introduction
+------------
+
+This document is provided to have an overview of the database architecture
+It also explain some patterns used in this architecture
+
+
+
+Overview
+--------
+
+
+
+
+
+The history pattern
+-------------------
+
+The purpose of the history pattern (invented here) is to provide a way to do accounting
+and ensure no billing error happens.
+It also ensure a change in pricing doesn't affect already running jobs.
+
+
+The main idea is to provided two tables:
+* The "current" table
+* the "history" table
+
+The "current" table represent the current state of pricing and capabilities of the API
+This table has no postfix (ex "prices", or "machines").
+This table has no auto-increment primary key
+
+The "history" table represent the "past and present" states of the API
+This table has the "_history" postfix (ex "prices_history", or "machines_history").
+This table has "start_time" and "end_time" fields to be able to know when an entry was valid
+Usually there is no unique index because multiple versions of past entry may be in this table.
+It has an auto-increment id.
+Every entry of the "current" table should have a corresponding entry in this table with:
+* the same id
+* the same datas
+* an end_time set to NULL
+
+Pro:
+* You can replay billing
+* No information loss
+* Coherence of pricing for a still running job
+* Keep simple tables for most common tasks
+* Ensure unicity in the "current" table
+
+Cons:
+* More difficult data manipulation.
+  To fix this, we provide python utility functions for insert or update method.
+  Note that you can do all of this directly in SQL, but for maintenance we choose to do this in python
+* More tables
+
+
+

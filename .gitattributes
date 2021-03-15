@@ -1,0 +1,24 @@
+# Set default behaviour, in case users don't have core.autocrlf set.
+* text=auto eol=lf
+
+# Windows specific files
+*.bat text eol=crlf
+
+# List binaryary files extensions
+*.db binary
+*.cur binary
+*.eot binary
+*.gif binary
+*.ico binary
+*.jpg binary
+*.JPG binary
+*.mo binary
+*.pdf binary
+*.png binary
+*.svg binary
+*.swf binary
+*.ttf binary
+*.woff binary
+*.zip binary
+
+

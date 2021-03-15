@@ -1,0 +1,9 @@
+{
+    "require": {
+        "onelogin/php-saml": "^2.13",
+      "ext-json": "*"
+    },
+    "config": {
+        "vendor-dir": "Vendor"
+    }
+}

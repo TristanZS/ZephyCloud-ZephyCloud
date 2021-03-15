@@ -1,0 +1,33 @@
+ZephyCLOUD Glossary
+===================
+
+
+Source Code Abbreviations
+-------------------------
+
+* sut:        System Under Test. Usually the one class tested in unit tests
+* wip:        Work In Progress. Something is not ready
+* nbr:        NumBeR
+* i:          Index
+* it:         Iterator
+* f:          File. Usually the currently opened file
+* conn:       CONNection. Usually to a database or a socket
+* db:         DataBase
+
+
+Business Abbreviations
+----------------------
+
+
+Business Terms
+--------------
+
+* packages:         A priced action, specific to a provider, an instance machine type and a specific kind of computation.
+* machine
+
+
+IT Terms
+--------
+
+
+

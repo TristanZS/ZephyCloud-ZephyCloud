@@ -1,0 +1,158 @@
+HOWTO: Database Versioning
+==========================
+
+
+1) Tools
+--------
+
+To make database versionable we are using a library called alembic
+(see http://alembic.zzzcomputing.com/en/latest ).
+
+Alembic is created by the author of SqlAlchemy, a python ORM.
+But for simplicity, we use simple sql statements and not the SqlAlchemy API.
+
+
+
+2) Overview of Migrations
+-------------------------
+
+The main idea of database versioning is to use 'migration' scripts,
+which describe how to change the database structure.
+Those migrations should be reversible, so we can go back to a previous state of the database.
+The migration scripts usually alter or create tables. There are also
+responsible for data backup when they do destructive work.
+
+The migration scripts are located in db/migrations/versions
+
+Every migration should have an 'upgrade' used to change the database format, 
+and a 'downgrade' method to revert those changes.
+
+
+
+3) Migration integration
+------------------------
+
+Migrations have a previous migration so they are ordered and work like a git tree, with branches
+But usually, you should only have a trunk
+
+To be able to rollback the database to a previous format, we need to have all 
+the most recent migrations even for an older source code.
+
+The proper way to manage migration is to have a separate git repository
+
+The file db/current_version.txt should get the hash of the migration 
+corresponding to the current code version. 
+This file is versioned by git, so when we change branch, you know which state database should be.
+
+Dropped Data are usually stored in db/migrations/db_data, and are not versionned.
+
+
+4) Migration Development Rules
+------------------------------
+
+There is a short set of rules required for migration pattern to be successful:
+
+* DO NOT UPDATE API WITH UNFINISHED MIGRATIONS.
+The migrations you have started to write will be pushed on the server and will not be updated by further
+update_api.sh calls.
+
+* DO NOT CHANGE A MIGRATION FILE AFTER A COMMIT !
+You should test your migration file before commiting it.
+If you have already commited the migration and you want to change something, do a new migration.
+The update_api.sh script use this assumption. if you don't follow this rules, api updates will break.
+
+* A MIGRATION MUST BE REVERSIBLE !
+You must implement both upgrade and the downgrade part of the migration. To be able to restore a database state,
+you may need to save dropped data.
+
+
+Here's a set of non-mandatory rules but they make development easier for everyone:
+
+* Don't forget to update db/current_version.txt
+That's the only way to know the desired state of the database your code wants
+
+* Do not drop table or column before long.
+Restoring data is not the easier part of migrations. So the easier way to manage this is just to stop using this
+table/column. After some times (several monthes), when it's clear you will never go back to a previous version,
+even for development or testing, you could create a REVERSIBLE migration which drop the table/column
+
+* Insert new columns at the end of a table.
+Sometime people do a 'SELECT * FROM', and them access results with row[2]. So if you add a column at the end it doesn't
+break this code. And honestly, even if it seems sometime ugly, column order doesn't matter.
+
+
+
+5) Configure dev environment
+----------------------------
+
+To be able to create migrations, you need to be able to test them.
+To do this you need a database on local computer with a state before your migration.
+To do that copy a database (from api server per example) where you want.
+Then configure an alembic config file as db/alembic.ini.
+You can use db/alembic.ini.example as base for your alembic configuration
+Please consider also to put those development file into .gitignore file
+By default we use db/api_example.db as default test database.
+You can download the real API database using 
+
+Example (Should be run in base project folder):
+
+API_PATH=$(realpath .)
+TEST_DB_PATH=API/db/api_example.db
+
+scp tristanzs@apidev.zephy-science.com:/home/zephyserver/app/ZCDB.db "$ZEPHYCLOUD_PATH/$TEST_DB_PATH"
+scp tristanzs@apidev.zephy-science.com:/home/zephyserver/app/ZCDB.db "$ZEPHYCLOUD_PATH/$TEST_DB_PATH.orig"
+sed -i '\#^'"$TEST_DB_PATH"'#d' "$ZEPHYCLOUD_PATH"/.gitignore
+echo "$TEST_DB_PATH" >> "$ZEPHYCLOUD_PATH"/.gitignore
+cp "$ZEPHYCLOUD_PATH"/API/db/alembic.ini.example "$ZEPHYCLOUD_PATH"/API/db/alembic.ini
+sed -i 's#DB_DEV_PATH#'"$ZEPHYCLOUD_PATH/$TEST_DB_PATH"'#' "$ZEPHYCLOUD_PATH"/API/db/alembic.ini
+sed -i '\#^API/db/alembic.ini$#d' "$ZEPHYCLOUD_PATH"/.gitignore
+echo API/db/alembic.ini >> "$ZEPHYCLOUD_PATH"/.gitignore
+
+
+Now, to check if all works as expected:
+    go to ZephyCLOUD/API/db
+    run 'alembic current'
+If no error appears, you are Ok
+
+
+6) Create a new migration
+-------------------------
+
+The main idea is to develop and test the migration in either upgrade 
+and downgrade way, and multiple times to be sure it works before commit
+Given commands are valid if you are located in project folder with default development db names
+
+- 1: re-read the 'section 3' rules
+- 2: create a new migration:
+        ( cd db; alembic revision -m"A SHORT DESCRIPTION OF MY MIGRATION" )
+- 3: ensure your test database (ex: db/api_example.db) is the state you want before your new migration
+         rm -f db/api_example.db && cp db/api_example.db.orig db/api_example.db
+- 4: edit the new generated file (in db/migrations/versions )
+- 5: run it forward:
+        ( cd db; alembic upgrade head )
+- 6: run it backward: alembic downgrade -1
+        ( cd db; alembic downgrade -1 )
+- 7: run it forward to ensure data drop restoration
+- 8: run it backward to ensure data drop restoration
+- 9: run it forward be in final state
+
+In case of failure, remove generated backups and restart at step 3
+
+In case both upgrade and downgrade works:
+- 10: dump new structure to tests/test_files/db_schema.sql:
+        echo ".schema" | sqlite3 db/api_example.db > tests/test_files/db_schema.sql
+- 11: remove tests/test_files/test_db.db:
+        rm -f tests/test_files/test_db.db
+- 12: run unit tests:
+        tests/run_unittests.sh
+
+In case unit tests works fails => Fix your code and restart at step 10.
+- 13: update db/current_version.txt
+        ( cd db; alembic current 2>/dev/null | cut -d' ' -f1 > current_version.txt )
+- 14: commit your code
+- 15: push your code
+
+
+
+
+

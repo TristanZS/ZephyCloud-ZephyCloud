@@ -1,0 +1,172 @@
+HOWTO: Git Workflow
+===================
+
+Introduction
+------------
+
+This document will describe the saner way to work with Git on a project.
+This workflow has been developed by me (Sam) so there is no name or other
+documentation about this workflow.
+
+If you have any question about this, ask me.
+
+This documentation assume you know the basics of git.
+
+
+
+
+Why this workflow ?
+-------------------
+
+Using git doesn't solve every versioning issues, because git is just a tool.
+So you have to get a proper way to use it.
+
+The following workflow was develop to solve the following issues:
+- git can't unmerge things
+- It's cool to know who must adapt his code when some changes breaks code
+- Sometime you will not put a 'still-under-development' feature into a new release
+- You want to be able to choose which feature you want for a specific release
+- Anyhow you can be able to create a new release, and/or give up a testing release
+- You want the git history to be easily understandable aka:
+  * You know why a feature is in a release
+  * You know why something is merged
+  * No more meaningless "Merge branch 'master' of ..."
+
+
+Note that using this workflow:
+- The history, while more understandable, can still be complicated
+- This workflow doesn't ease two or more people working on the same feature ( but
+  it's make it more complicated neither)
+- If you miss following correctly this workflow, this can be a little ugly,
+  but nothing will be lost or corrupted, and you can restart using the workflow
+  whenever you want
+
+
+
+
+Some git background
+-------------------
+
+Before reading the documentation, you need to know some git counter-intuitive ideas.
+Be sure you understand the following poits before continuing>
+If it's not the case, here a good doc about git: https://git-scm.com/book/en/v2/
+
+- A commit knows all its history
+- Two commits with the same changes (cherry-picked for example) are not the same commit
+  because they don't have the same history
+- A branch is just a pointer to a commit
+- You can have more than one branch pointing the same commit
+- You know what git rebase do
+- 'come from' = 'rebased from'
+- A tag is a specialized branch
+
+If you don't understand the 'rebase' thing, I'll explain it a little more after.
+It's the more important point of this document, so ensure you understand it well
+
+
+
+
+Workflow description
+--------------------
+
+The workflow consist of:
+- Having a 'master' branch, which is the reference.
+  So anything you are working on should come from 'master'
+- Every new feature should be developed on a separated branch, which come from master
+- Never merged branch can happened, it's means you finally doesn't need this feature
+
+When you want to do a new release:
+- You create a new branch, called 'stage', from master
+- The branch 'stage' is disposable. You can cancel a release if you found bugs or
+  if you want to dismiss a feature 9because not yet ready, or whatever)
+- You can even multiple stage branches ('stage_eu' and 'stage_cn', or 'stage_2.1.3')
+- You merge feature branches inside 'stage' branch if you want this feature to be
+  in the next release
+- You test your stage branch
+- If your stage branch is ok, you can distribute this version
+- You tag this version with the release name
+
+Several days after you deliver a release, if you don't have bad feedbacks and
+all the features you have in this release will always bw there:
+- Define your tagged version as your new master
+
+
+
+
+
+Rebase often, NOT merge
+-----------------------
+
+'git merge' is a really to often overrated and used tool. In most of the case you should
+use 'git rebase' instead of 'git merge'.
+
+The git merge and git rebase have two different conceptual meanings:
+'git merge' means: I want those two (or more) unrelated things together
+'git rebase' means: My commits should come from the commit of those branch
+
+
+Giving this history:
+
+master ->     0  (fix #3)
+              |
+feat_1 ->  0  |  (innovative new feature 1)
+            \ 0  (fix #2)
+             \|
+              0  (fix #1)
+              |
+              0  (initial commit)
+
+
+This means, "someone was working on feature 1, but some changes have been tested and approved"
+So in this case, you should rebase instead of merge Here the results of the two commands:
+
+       Git rebase                         |               Git merge
+                                          |
+ git checkout feat_1                      |   git checkout feat_1
+ git rebase master                        |   git merge master
+                                          |
+                                          |
+ feat_1 -> 0 (innovative new feature 1)   |   feat_1 -> 0     (merge 'master' into 'feat_1')
+           |                              |             |\
+ master -> 0 (fix #3)                     |   master -> 0 \   (fix #3)
+           |                              |             |  0  (innovative new feature 1)
+           0 (fix #2)                     |             0  |  (fix #2)
+           |                              |             | /
+           0 (fix #1)                     |             |/
+           |                              |             0     (fix #1)
+           0 (initial commit)             |             |
+                                          |             0     (initial commit)
+                                          |
+ Meaning: Someone is developing a         |   Meaning: Note sure, someone wanted the 'master' and
+ feature 1 from the more up-to-date       |   the feature 1 in the same place ?
+ stable version                           |
+                                          |
+
+Pay attention that 'git rebase':
+ - change the history of commits
+ - is NOT COMMUTATIVE !
+
+Note that 'git merge' can accept more than two branches.
+Because it has a meaning: I want feature 1, feature 2 and feature 4 in my 'stage'.
+But 'git rebase' accept only one other branch: I want my branch to come from 'master'
+If you are confused and don't know which one you should use, ask yourself if you would use more branches.
+If not, you should use git rebase
+
+
+
+
+Moving a branch pointer
+-----------------------
+
+Since a branch is just a pointer, you always can be able to destroy a branch, it will not destroy any of your commits
+(but they can be harder to find
+
+So you can move a branch pointer be deleting it and recreating it. Ex:
+git checkout stage
+git branch -D master
+git checkout -b master
+(git push origin master)
+
+You can do this with one command if you know the commit hash. Ex:
+git branch -f master ba2993
+

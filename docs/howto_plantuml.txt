@@ -1,0 +1,18 @@
+HOWTO: Manage .plantuml files
+=============================
+
+
+
+1) Ensure you have plantuml installed
+On ubuntu:
+  sudo apt-get install plantuml
+  
+
+2) generate image file:
+On ubuntu:
+  plantuml DOCS/api-doc.plantuml
+  
+  
+3) Open the generated file with an image viewer
+On ubuntu:
+  eog dev/ZephyCLOUD/DOCS/api-doc.png

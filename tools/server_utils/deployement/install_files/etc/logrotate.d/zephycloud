@@ -1,0 +1,13 @@
+/var/log/zephycloud/zephycloud_dashboard.log
+/var/log/zephycloud/zephycloud_server.log
+/var/log/zephycloud/zephycloud_webapi.log
+/var/log/zephycloud/zephycloud_websocket.log
+{
+  rotate 10
+  daily
+  compress
+  delaycompress
+  missingok
+  notifempty
+  create 640 zephycloud zephycloud
+}

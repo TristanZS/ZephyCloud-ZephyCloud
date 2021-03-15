@@ -1,0 +1,48 @@
+HOWTO: Deploy a new API Server
+==============================
+
+
+1) Get root access to this server.
+
+
+2) Create a user to keep root access. 
+Ensure you can connect through ssh and sudo.
+
+
+3) Secure the server. For example:
+- install fail2ban
+- allow only ssh connection via asymetric keys
+- remove ubuntu user
+- install a firewall if required 
+  (in this case, allow ports 22, 80 and 443)
+
+
+4) Configure your DNS (see GANDI's DNS configuration page).
+Warning: This change can be not affective before 3 hours
+
+
+5) If you will use a new AWS region, please configure a new 
+IAM 'OmegaZ' account on AWS, and store the access keys in configs files
+See amazon_rights.txt for more details
+
+
+6) Copy the ZephyCLOUD/API folder on the server
+
+
+7) Run the install/install.sh script on the new server
+WARNING: This script need the DNS change to be entirely propagated.
+(because of https certificate)
+
+
+8) Copy the ssh keys located in ZephyCLOUD/KEYS to 
+/home/zephyserver/.ssh and ensure correct permissions and owners
+
+
+9) Launch 'sudo restart_api'
+
+10) Enjoy ... Arfff No...
+In fact, there probably will be some issues, so test and test again
+
+
+11) Now you can Enjoy ^^
+

@@ -1,0 +1,155 @@
+.nobody{
+	color:#cccccc;
+}
+
+.error-message{
+  color: #F44336 !important;
+  font-size: 12px;
+}
+
+.strong,.bold{
+	font-weight: bold;
+}
+
+
+.page-container {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+.clickable-row:hover td {
+    background-color: #86e3da !important;
+}
+
+.ext_link:after {
+    font-family: 'FontAwesome';
+    content: " \f08e";
+}
+
+.current_details {
+    background-color: #cff9f7;
+}
+
+.back-to-the-future {
+    background-repeat: no-repeat;
+    background-size: contains, cover;
+    background-position: center;
+}
+
+.back-to-the-future .panel, .back-to-the-future .page-header-default {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.back-to-the-future .panel-flat > .panel-heading {
+     background-color: transparent;
+}
+
+.breadcrumb-elements li {
+  padding: 5px;
+}
+
+.daterangepicker.single .ranges {
+  display: block;
+}
+
+.daterangepicker .ranges *[data-range-key='Back To The Future'] {
+    background-color: rgb(33, 150, 243);
+    color: #fff;
+    margin: 5px;
+}
+.daterangepicker .ranges *[data-range-key='Back To The Future']:hover {
+    background-color: rgb(73, 168, 244);
+}
+
+.daterangepicker select.yearselect {
+    width: 50%;
+}
+
+.deleted td {
+    color: #AAAAAA;
+}
+
+.nojs-hide {
+	display: none;
+}
+
+
+.navbar-inverse {
+    background-color: #222222 !important;
+    border-color: #222222 !important;;
+}
+
+.sidebar {
+    background-color: #222222 !important;;
+}
+
+th {
+	white-space: nowrap
+}
+
+.search-category {
+	font-weight: bold;
+	padding: .2em .4em;
+	margin: .8em 0 .2em;
+	line-height: 1.5;
+}
+
+
+
+.flash-container {
+	margin: 0px 20px 0px 20px;
+}
+
+.flash-container .alert-dismissible .close {
+	right: -15px;
+	top: -15px;
+}
+
+.icon-nofilter:after {
+	content:"\ed64";
+	color:#FF3333;
+}
+
+.icon-nofilter:before {
+	content:"\ee88";
+	letter-spacing:-1em;
+}
+
+.pagination_block .btn {
+	margin: 5px;
+}
+
+.btn_ellipsis {
+	margin: 8px;
+	vertical-align: baseline;
+}
+
+.overlay {
+  /* Height & width depends on how you want to reveal the overlay (see JS below) */
+  height: 100%;
+  width: 100%;
+  display: block;
+  position: fixed; /* Stay in place */
+  z-index: 99999; /* Sit on top */
+  left: 0;
+  top: 0;
+  background-color: rgb(0,0,0); /* Black fallback color */
+  background-color: rgba(0,0,0, 0.5); /* Black w/opacity */
+  overflow-x: hidden; /* Disable horizontal scroll */
+}
+
+/* Position the content inside the overlay */
+.overlay-content {
+  position: relative;
+  top: 25%; /* 25% from the top */
+  width: 100%; /* 100% width */
+  text-align: center; /* Centered text/links */
+  margin-top: 30px; /* 30px top margin to avoid conflict with the close button on smaller screens */
+}

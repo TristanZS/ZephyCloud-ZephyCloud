@@ -1,0 +1,34 @@
+[Unit]
+Description=ZephyCloud folder initialization
+Before=nginx.service php7.0-fpm.service zephycloud_webapi.socket zephycloud.service zephycloud_webapi.service zephycloud_websocket.service
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+
+# Initialize log folder
+ExecStart=/bin/mkdir -p /var/log/zephycloud
+ExecStart=/bin/chown -R zephycloud:zephycloud /var/log/zephycloud
+ExecStart=/bin/chmod -R u+rwX /var/log/zephycloud
+ExecStart=/bin/chmod 750 /var/log/zephycloud
+
+# Initialize tmp folder
+ExecStart=/bin/mkdir -p /tmp/zephycloud
+ExecStart=/bin/chown -R zephycloud:zephycloud /tmp/zephycloud
+ExecStart=/bin/chmod 750 /tmp/zephycloud
+
+# Initialize cache folder
+ExecStart=/bin/mkdir -p /var/cache/zephycloud
+ExecStart=/bin/chown -R zephycloud:zephycloud /var/cache/zephycloud
+ExecStart=/bin/chmod 750 /var/cache/zephycloud
+
+# Initilize run folder
+ExecStart=/bin/mkdir -p /var/run/zephycloud
+ExecStart=/bin/chown -R zephycloud:zephycloud /var/run/zephycloud
+ExecStart=/bin/chmod 750 /var/run/zephycloud
+
+PrivateTmp=false
+
+[Install]
+WantedBy=multi-user.target

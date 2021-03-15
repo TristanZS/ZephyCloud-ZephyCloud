@@ -1,0 +1,27 @@
+[Unit]
+Description=ZephyCloud API
+Requires=zephycloud_webapi.socket zephycloud.service
+Before=nginx.service
+After=network.target zephycloud_webapi.socket zephycloud.service postgres.service
+
+[Service]
+User=zephycloud
+Group=zephycloud
+
+RuntimeDirectory=gunicorn
+RuntimeDirectoryMode=750
+
+PIDFile=/run/gunicorn/pid
+
+WorkingDirectory=/home/zephycloud/app
+Environment="PATH=/home/zephycloud/zephycloud_env/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="PWD=/home/zephycloud/app"
+ExecStart="/home/zephycloud/zephycloud_env/bin/gunicorn" -c "/home/zephycloud/app/gunicorn_config.py" web_api:app --preload
+ExecReload=/bin/kill -s HUP "$MAINPID"
+ExecStop=/bin/kill -s TERM "$MAINPID"
+
+PrivateTmp=false
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

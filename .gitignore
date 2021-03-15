@@ -1,0 +1,38 @@
+# List all files ignored by git
+
+# local config file
+config.local.yml
+config.conf
+dashboard.conf
+
+# Ignore python cache files
+*.pyc
+__pycache__
+
+fort.3
+_build
+
+# Ignore php cache files
+phpdoc-cache-*
+
+# Temporary and computer local files
+tmp/*
+fragments.txt
+workdir/*
+venv/*
+local_secrets/*
+
+# Database migration local dev files
+db/migrations/db_data/*
+db/api_example.db
+db/alembic.ini
+tests/test_files/*.db
+
+# Ignore hidden files, but keep important files
+.*
+!.gitignore
+!.gitattributes
+!.editorconfig
+!.dockerignore
+!.keep
+!src/worker/toolchain/ZephyTOOLS/**/*.pyc

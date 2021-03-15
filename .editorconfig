@@ -1,0 +1,36 @@
+; This file is for unifying the coding style for different editors and IDEs.
+; More information at http://editorconfig.org
+
+root = true
+
+[*]
+indent_size = 4
+indent_style = tab
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.py]
+indent_style = space
+indent_size = 4
+
+[*.yml]
+indent_style = space
+indent_size = 2
+
+[*.sh]
+indent_style = space
+indent_size = 2
+
+[*.ctp]
+indent_style = space
+indent_size = 2
+
+
+
+# Window Files:
+# -----------------------------------------------------------------
+
+[*.bat]
+end_of_line = crlf
+

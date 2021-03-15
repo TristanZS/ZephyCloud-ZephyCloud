@@ -1,0 +1,85 @@
+@startuml
+skinparam sequenceBoxBorderColor white
+skinparam shadowing false
+skinparam sequenceGroupBorderThickness 1
+
+
+actor ZephyToolsUser
+box "API" #e5e7ff
+	participant OmegaZ
+	database RedisDB
+	participant Launcher
+end box
+box "Amazon" #e5fffc
+	participant Aws_Api
+	participant EC2_Instance
+	participant S3_Bucket
+end box
+
+activate OmegaZ
+activate Launcher
+activate RedisDB
+activate Aws_Api
+|||
+loop every seconds
+  Launcher -> RedisDB: Work to do ?
+  activate Launcher #FFBBBB
+  activate RedisDB #FFBBBB
+  RedisDB -> Launcher: No
+  deactivate RedisDB
+  deactivate Launcher
+end loop
+|||
+hnote over ZephyToolsUser: Launch application
+ZephyToolsUser -> ZephyToolsUser: Ask computation
+activate ZephyToolsUser
+|||
+ZephyToolsUser -> OmegaZ: Do this work
+activate OmegaZ #FFBBBB
+OmegaZ -> RedisDB: This work need to be done
+activate RedisDB #FFBBBB
+RedisDB -> OmegaZ: Ok
+deactivate RedisDB
+OmegaZ -> ZephyToolsUser: Ok
+deactivate OmegaZ
+
+Launcher -> RedisDB: Work to do ?
+activate Launcher #FFBBBB
+activate RedisDB #FFBBBB
+RedisDB -> Launcher: Yes
+deactivate RedisDB
+Launcher -> Aws_Api: Create Instance
+activate Aws_Api #FFBBBB
+Aws_Api -> EC2_Instance: Create
+activate EC2_Instance
+Aws_Api -> Launcher: Ok, this is the ip of the new instance
+deactivate Aws_Api
+hnote over EC2_Instance : Initialisation
+Launcher -> EC2_Instance: Are you alive ?
+Launcher -> EC2_Instance: Are you alive ?
+hnote over EC2_Instance : Initialisation finished
+Launcher -> EC2_Instance: Are you alive ?
+activate EC2_Instance #FFBBBB
+EC2_Instance -> Launcher: yes
+deactivate EC2_Instance
+Launcher -> EC2_Instance: Do this computation
+activate EC2_Instance #FFBBBB
+|||
+loop
+  EC2_Instance -> S3_Bucket: Store temp results
+  activate S3_Bucket
+  S3_Bucket -> EC2_Instance: Ok
+  deactivate S3_Bucket
+end loop
+|||
+EC2_Instance -> S3_Bucket: Store final results
+activate S3_Bucket
+S3_Bucket -> EC2_Instance: Ok
+deactivate S3_Bucket
+|||
+deactivate EC2_Instance
+|||
+deactivate EC2_Instance
+|||
+destroy EC2_Instance
+@enduml

@@ -1,0 +1,102 @@
+HOWTO: Send multiple files and parameters
+=========================================
+
+
+
+You can send several files and params simultaneously with a single request.
+Here an example doing that.
+This demonstration use the libraries flask for server, and slumber for client.
+But other libraries ('request' for example) can do the same job.
+Note also that POST and PUT method could be used interchangeably.
+
+
+The server code
+---------------
+
+import os
+from flask import Flask, request
+from werkzeug.utils import secure_filename
+app = Flask(__name__)
+app.config.from_object(__name__)
+app.config['UPLOAD_FOLDER'] = '/tmp'
+
+
+@app.route('/upload_multiple/', methods=['POST', 'PUT'])
+def show_entries():
+	result = "<h3>Request received:</h3><br/>\n"
+
+	# Read params:
+	result += "<br/>\n"
+	result += "<h4>Params:</h4><br/>\n"
+	if request.form:
+		for key, value in request.form.items():
+			result += " - form:" + key + ": '" + str(value) + "'<br/>\n"
+
+	# Receive Files
+	result += "<br/>\n"
+	result += "<h4>Files:</h4><br/>\n"
+	uploaded_files = request.files.getlist("files[]")
+	for file in uploaded_files:
+		if not file:
+			continue
+		filename = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename))
+		file.save(filename)
+
+		# Rendering file content
+		result += " - " + filename + ": '"
+		with open(filename, 'r') as fh:
+			result += fh.read() + "'<br/>\n"
+
+	return result
+
+if __name__ == '__main__':
+   app.run()
+
+
+
+The client code
+---------------
+
+import slumber
+
+# Create test files
+for i in range(4):
+	with open('/tmp/send_file_'+str(i+1), 'w') as fh:
+		fh.write("content of file "+str(i+1))
+
+# Prepare the request
+api = slumber.API("http://localhost:5000/")
+file_handles = []
+try:
+	for i in range(4):
+		file_handles.append(open('/tmp/send_file_' + str(i + 1), 'rb'))
+
+	# this can also be writen like this : arg_files = map(lambda fh: ('files[]', fh), file_handles)
+    arg_files = []
+	for fh in file_handles:
+		arg_files.append(('files[]', fh))
+
+	# DO the request
+	result = api.upload_multiple.post({'one_arg': 'a value', 'another_arg': 'another value'}, files=arg_files)
+	print(result)
+
+finally:  # ensure the opened files will be closed
+	for fh in file_handles:
+		fh.close()
+
+
+Result
+------
+
+<h3>Request received:</h3><br/>
+<br/>
+<h4>Params:</h4><br/>
+ - form:another_arg: 'another value'<br/>
+ - form:one_arg: 'a value'<br/>
+<br/>
+<h4>Files:</h4><br/>
+ - /tmp/send_file_1: 'content of file 1'<br/>
+ - /tmp/send_file_2: 'content of file 2'<br/>
+ - /tmp/send_file_3: 'content of file 3'<br/>
+ - /tmp/send_file_4: 'content of file 4'<br/>
+

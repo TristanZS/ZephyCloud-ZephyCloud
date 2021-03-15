@@ -1,0 +1,25 @@
+[Unit]
+Description=ZephyCloud runtime
+Requires=redis.service
+Before=nginx.service
+After=redis.service postgres.service
+
+[Service]
+User=zephycloud
+Group=zephycloud
+
+MemoryMax=90%
+CPUQuota=90%
+
+WorkingDirectory=/home/zephycloud/app
+Environment="PATH=/home/zephycloud/zephycloud_env/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="PWD=/home/zephycloud/app"
+PIDFile=/var/run/zephycloud/zephycloud.pid
+ExecStart="/home/zephycloud/zephycloud_env/bin/python" "/home/zephycloud/app/server.py" -p "/var/run/zephycloud/zephycloud.pid"
+ExecReload=/bin/kill -USR1 "$MAINPID"
+
+PrivateTmp=false
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
